@@ -6,7 +6,7 @@
 #define WATER      0
 #define SHIP_VAL   3
 
-// --------- Utilidades ----------
+
 void init_board(int b[BOARD_SIZE][BOARD_SIZE]) {
     for (int i = 0; i < BOARD_SIZE; i++)
         for (int j = 0; j < BOARD_SIZE; j++)
@@ -14,15 +14,15 @@ void init_board(int b[BOARD_SIZE][BOARD_SIZE]) {
 }
 
 void print_board(int b[BOARD_SIZE][BOARD_SIZE]) {
-    // cabeçalho das colunas (A, B, C, ..., J)
+  
     printf("   ");
     for (int c = 0; c < BOARD_SIZE; c++) 
         printf("%c ", 'A' + c);
     printf("\n");
 
-    // linhas numeradas de 0 a 9
+    
     for (int r = 0; r < BOARD_SIZE; r++) {
-        printf("%2d ", r);  // índice da linha
+        printf("%2d ", r);  
         for (int c = 0; c < BOARD_SIZE; c++)
             printf("%d ", b[r][c]);
         printf("\n");
