@@ -1,40 +1,90 @@
 #include <stdio.h>
+#include <stdbool.h>
 
-// Desafio Batalha Naval - MateCheck
-// Este código inicial serve como base para o desenvolvimento do sistema de Batalha Naval.
-// Siga os comentários para implementar cada parte do desafio.
+#define BOARD_SIZE 10
+#define SHIP_SIZE  3
+#define WATER      0
+#define SHIP_VAL   3
 
-int main() {
-    // Nível Novato - Posicionamento dos Navios
-    // Sugestão: Declare uma matriz bidimensional para representar o tabuleiro (Ex: int tabuleiro[5][5];).
-    // Sugestão: Posicione dois navios no tabuleiro, um verticalmente e outro horizontalmente.
-    // Sugestão: Utilize `printf` para exibir as coordenadas de cada parte dos navios.
+// --------- Utilidades ----------
+void init_board(int b[BOARD_SIZE][BOARD_SIZE]) {
+    for (int i = 0; i < BOARD_SIZE; i++)
+        for (int j = 0; j < BOARD_SIZE; j++)
+            b[i][j] = WATER;
+}
 
-    // Nível Aventureiro - Expansão do Tabuleiro e Posicionamento Diagonal
-    // Sugestão: Expanda o tabuleiro para uma matriz 10x10.
-    // Sugestão: Posicione quatro navios no tabuleiro, incluindo dois na diagonal.
-    // Sugestão: Exiba o tabuleiro completo no console, mostrando 0 para posições vazias e 3 para posições ocupadas.
+void print_board(int b[BOARD_SIZE][BOARD_SIZE]) {
+    // cabeçalho das colunas (A, B, C, ..., J)
+    printf("   ");
+    for (int c = 0; c < BOARD_SIZE; c++) 
+        printf("%c ", 'A' + c);
+    printf("\n");
 
-    // Nível Mestre - Habilidades Especiais com Matrizes
-    // Sugestão: Crie matrizes para representar habilidades especiais como cone, cruz, e octaedro.
-    // Sugestão: Utilize estruturas de repetição aninhadas para preencher as áreas afetadas por essas habilidades no tabuleiro.
-    // Sugestão: Exiba o tabuleiro com as áreas afetadas, utilizando 0 para áreas não afetadas e 1 para áreas atingidas.
+    // linhas numeradas de 0 a 9
+    for (int r = 0; r < BOARD_SIZE; r++) {
+        printf("%2d ", r);  // índice da linha
+        for (int c = 0; c < BOARD_SIZE; c++)
+            printf("%d ", b[r][c]);
+        printf("\n");
+    }
+}
 
-    // Exemplos de exibição das habilidades:
-    // Exemplo para habilidade em cone:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 1 1 1 1 1
-    
-    // Exemplo para habilidade em octaedro:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 0 0 1 0 0
+void build_ship_positions(int r0, int c0, int horizontal,
+                          int rows[SHIP_SIZE], int cols[SHIP_SIZE]) {
+    for (int k = 0; k < SHIP_SIZE; k++) {
+        rows[k] = r0 + (horizontal ? 0 : k);
+        cols[k] = c0 + (horizontal ? k : 0);
+    }
+}
 
-    // Exemplo para habilidade em cruz:
-    // 0 0 1 0 0
-    // 1 1 1 1 1
-    // 0 0 1 0 0
+bool can_place_ship(int b[BOARD_SIZE][BOARD_SIZE],
+                    int rows[SHIP_SIZE], int cols[SHIP_SIZE]) {
+    for (int k = 0; k < SHIP_SIZE; k++) {
+        int r = rows[k], c = cols[k];
+        if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE)
+            return false;
+        if (b[r][c] != WATER)
+            return false;
+    }
+    return true;
+}
 
+void place_ship(int b[BOARD_SIZE][BOARD_SIZE],
+                int rows[SHIP_SIZE], int cols[SHIP_SIZE]) {
+    for (int k = 0; k < SHIP_SIZE; k++)
+        b[rows[k]][cols[k]] = SHIP_VAL;
+}
+
+int main(void) {
+    int board[BOARD_SIZE][BOARD_SIZE];
+    init_board(board);
+
+    // Navio 1: horizontal em (linha 2, coluna B → c=1)
+    int n1_r0 = 2, n1_c0 = 1, n1_horizontal = 1;
+
+    // Navio 2: vertical em (linha 5, coluna H → c=7)
+    int n2_r0 = 5, n2_c0 = 7, n2_horizontal = 0;
+
+    int n1_rows[SHIP_SIZE], n1_cols[SHIP_SIZE];
+    int n2_rows[SHIP_SIZE], n2_cols[SHIP_SIZE];
+
+    build_ship_positions(n1_r0, n1_c0, n1_horizontal, n1_rows, n1_cols);
+    build_ship_positions(n2_r0, n2_c0, n2_horizontal, n2_rows, n2_cols);
+
+    if (!can_place_ship(board, n1_rows, n1_cols)) {
+        printf("Navio 1 inválido.\n");
+        return 1;
+    }
+    place_ship(board, n1_rows, n1_cols);
+
+    if (!can_place_ship(board, n2_rows, n2_cols)) {
+        printf("Navio 2 inválido.\n");
+        return 1;
+    }
+    place_ship(board, n2_rows, n2_cols);
+
+    print_board(board);
     return 0;
 }
+
+
